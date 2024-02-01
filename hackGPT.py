@@ -7,15 +7,24 @@ import sys
 import fade
 from pathlib import Path
 import openai
+
+api_key = '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'
+openai.api_key = api_key
 from time import sleep
 import os
 import fade
 from pathlib import Path
 import openai
+
+api_key = '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'
+openai.api_key = api_key
 import requests
 import urllib.parse
 import urllib.request
 import openai
+
+api_key = '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'
+openai.api_key = api_key
 from dotenv import load_dotenv
 import gradio as gr
 import pandas as pd
@@ -35,7 +44,6 @@ from prettytable import from_csv
 
 load_dotenv(".env")
 apiToken = os.environ.get('OPENAI_TOKEN')
-openai.api_key = apiToken
 
 if 'OPENAI_TOKEN' in os.environ:
    pass
@@ -123,134 +131,113 @@ fadedhack = fade.water(hack)
 fadedgpt = fade.random(gpt)
 
 
-for pair in zip(*map(str.splitlines, (fadedhack, fadedgpt))): 
-  print(*pair)                                                                                                
-#------------------------------------ main menu prompt  ------------------------------------ 
+import openai
+api_key = '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'
+openai.api_key = api_key
+import gradio as gr
+import csv
+import webbrowser
+import inquirer
+from termcolor import colored, cprint
+import subprocess
 
-with open('output/chat_hackGPT_log.csv', 'a+', encoding='UTF8', newline='') as f:
-    w = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-    w.writerow(['Date', 'Persona', 'Query', 'Response'])
-    f.close()
+# Initialize OpenAI API key
+  # Replace with your actual OpenAI API key
 
-questions = [
-            inquirer.List("Persona",message="\033[0;34m𝗦𝗘𝗟𝗘𝗖𝗧 𝗣𝗘𝗥𝗦𝗢𝗡𝗔 \033[1;97m",
-                choices=['hackGPT', 'chatGPT-DEV','DAN'],
-            )
-        ]
+# Set the date_string and hackgpt_persona
+date_string = "2024-02-01"  # Replace with your actual date
+hackgpt_persona = ""
 
-answers = inquirer.prompt(questions)
-hackgpt_persona = answers['Persona']
-
-if hackgpt_persona =='hackGPT':
-    hackGPT_mode = open('personas/hackGPTv1.md' ,"r")
-    hackGPT_mode = hackGPT_mode.read()
-    pass
-elif hackgpt_persona =='chatGPT-DEV':
-    hackGPT_mode = open('personas/DEVv1.md' ,"r")
-    hackGPT_mode = hackGPT_mode.read()
-    pass
-elif hackgpt_persona =='DAN':
-    hackGPT_mode = open('personas/DANv11.md' ,"r")
-    hackGPT_mode = hackGPT_mode.read()
-    pass
-
-#print("For Additional Persona's Visit: \nhttp://www.jamessawyer.co.uk/pub/gpt_jb.html\nhttps://github.com/0xk1h0/ChatGPT_DAN ")
-#----------------------------------hackchatGPT---------------------------------------------------
-#hackgpt_bulk = []
-#def hackgpt_bulk():
-#    with open(sys.argv[2], 'r') as targets:
-#        for line in targets:
-#            print (line.strip())
-#            hack = line.rstrip("\r\n")
-#            hackgpt_bulk.append(hack)
-#
-#        for hack in hackgpt_bulk:
-#            response = openai.Completion.create(
-#            model="text-davinci-003",
-#            prompt=str(hackGPT_mode) + str(line),
-#            temperature=0,
-#            max_tokens=3000,
-#            top_p=1,
-#            frequency_penalty=0,
-#            presence_penalty=0,
-#            stop=["\"\"\""]
-#            )
-#            response = response['choices'][0]['text']
-#            with open('output/chat_hackGPT_log.csv', 'a+', encoding='UTF8', newline='') as f:
-#                w = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-#                w.writerow([date_string, hackgpt_persona, str(line).strip('\n'), str(response).lstrip('\n')])
-#                f.close()
-#
+# Define the add_text function
 def add_text(state, text):
-    response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=str(hackGPT_mode) + str(text),
-        temperature=0,
-        max_tokens=3000,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0,
-        stop=["\"\"\""]
-        )
-    response = response['choices'][0]['text']
-    state = state + [(str(response),str(text))]
+    response = client.completions.create(model="text-davinci-003",
+    prompt=str(hackGPT_mode) + str(text),
+    temperature=0,
+    max_tokens=3000,
+    top_p=1,
+    frequency_penalty=0,
+    presence_penalty=0,
+    stop=["\285643", "\""])
+    response = response.choices[0].text
+    state = state + [(str(response), str(text))]
 
-    try: 
+    try:
         with open('output/chat_hackGPT_log.csv', 'a+', encoding='UTF8', newline='') as f:
             w = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             w.writerow([date_string, hackgpt_persona, str(text).strip('\n'), str(response).lstrip('\n')])
-            f.close()
-
     finally:
         return state, state
+
+# Define the add_file function
 def add_file(file_state, file):
-    with open(file.name, 'r') as targets:
-        search = targets.read()
-        response = openai.Completion.create(
-            model="text-davinci-003",
-            prompt=str(search)+"\n",
+    try:
+        with open(file.name, 'r') as targets:
+            search = targets.read()
+            response = client.completions.create(model="text-davinci-003",
+            prompt=str(search) + "\n",
             temperature=0,
             max_tokens=3000,
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0,
-            stop=["\"\"\""]
-            )
-        
-    file_response = response['choices'][0]['text']
-    file_state = file_state + [("" + str(file_response), "Processed file: "+ str(file.name))]
-    try:
+            stop=["\"\"\""])
+
+        file_response = response.choices[0].text
+        file_state = file_state + [("" + str(file_response), "Processed file: " + str(file.name))]
+
         with open('output/chat_hackGPT_file_log.csv', 'a+', encoding='UTF8', newline='') as f:
             w = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             w.writerow([date_string, hackgpt_persona, str(search).strip('\n'), str(response).lstrip('\n')])
-            f.close()
-    
+
+    except Exception as e:
+        # Handle the exception if needed
+        print(f"An error occurred: {e}")
+
     finally:
         return file_state, file_state
-            
 
+# Set hackGPT_mode based on user input
+questions = [
+    inquirer.List("Persona", message="\033[0;34m𝗦𝗘𝗟𝗘𝗖𝗧 𝗣𝗘𝗥𝗦𝗢𝗡𝗔 \033[1;97m",
+                  choices=['hackGPT', 'chatGPT-DEV', 'DAN'],
+    )
+]
+
+answers = inquirer.prompt(questions)
+hackgpt_persona = answers['Persona']
+
+if hackgpt_persona == 'hackGPT':
+    hackGPT_mode = open('personas/hackGPTv1.md', "r").read()
+elif hackgpt_persona == 'chatGPT-DEV':
+    hackGPT_mode = open('personas/DEVv1.md', "r").read()
+elif hackgpt_persona == 'DAN':
+    hackGPT_mode = open('personas/DANv11.md', "r").read()
+
+# Gradio setup
 with gr.Blocks(css="#chatbot .output::-webkit-scrollbar {display: none;}") as hackerchat:
     state = gr.State([])
     chatbot = gr.Chatbot()
 
-    with gr.Row():
-        with gr.Column(scale=0.85):
-            txt = gr.Textbox(show_label=False, placeholder="Enter query and press enter").style(container=False)
-        with gr.Column(scale=0.15, min_width=0):
-            btn = gr.UploadButton("📁", file_types=["file"])
+    with gr.Column():
+        txt = gr.Textbox(show_label=False, placeholder="Enter query and press enter")
+    with gr.Column(scale=0.15, min_width=0):
+        btn = gr.UploadButton("📁", file_types=["file"])
 
-    txt.submit(add_text, [state, txt], [ chatbot, state])
-    txt.submit(lambda :"", None, txt)
+    txt.submit(add_text, [state, txt], [chatbot, state])
+    txt.submit(lambda: "", None, txt)
     btn.upload(add_file, [state, btn], [state, chatbot])
 
-webbrowser.open("http://127.0.0.1:1337") 
-#subprocess.call(["sort", "-h output/chat_hackGPT_log.csv", "|", "res/tools/csv_hack", "|", "lolcat -p 23"])
-#------------------------------------ results sample ------------------------------------        
+
+# Open the browser
+webbrowser.open("http://127.0.0.1:1337 GPT_log.csv | res/tools/csv_hack | lolcat -p 23")
+
+# Results sample
 with open('output/chat_hackGPT_log.csv', 'r', encoding='UTF8') as f:
     t = from_csv(f)
-    t._max_width = {"Date" : 10, "Persona" : 8, "Query" : 8, "Response" : 48}
+    t._max_width = {"Date": 10, "Persona": 8, "Query": 8, "Response": 48}
     print(fade.purplepink(str(t)))
-        
+
+# Launch Gradio
 if __name__ == "__main__":
     hackerchat.launch(height=1000, quiet=True, favicon_path="res/hackgpt_fav.png", server_port=1337)
 
