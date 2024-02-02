@@ -146,7 +146,6 @@ with open('output/chat_hackGPT_log.csv', 'r', encoding='UTF8') as f:
 iface.launch(
     height=1000,
     quiet=True,
-    favicon="res/hackgpt_fav.png",
     share=True,
     debug=True,
 )
