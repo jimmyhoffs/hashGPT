@@ -28,7 +28,7 @@ if api_key is None:
              88    88   8 88   8 8    8 88   8
              88    88   8 88   8 8    8 88   8
              88eee 88   8 88   8 8eeee8 88   8
-
+        '''
     # If API key is not available in the environment variable, prompt the user
     user_key = input('Enter OpenAI API Key: ').replace(" ", "")
     api_key = user_key
@@ -61,7 +61,7 @@ def add_text(state, inputs):
     text, file_data = inputs
 
     # Handle text input
-    response_text = client.completions.create(
+    response_text = openai.Completion.create(
         model="text-davinci-003",
         prompt=str(hackGPT_mode) + str(text),
         temperature=0,
@@ -75,7 +75,7 @@ def add_text(state, inputs):
 
     # Handle file input
     if file_data is not None:
-        file_response = client.completions.create(
+        file_response = openai.Completion.create(
             model="text-davinci-003",
             prompt=str(file_data.decode("utf-8")) + "\n",
             temperature=0,
@@ -100,6 +100,7 @@ def add_text(state, inputs):
         print(f"An error occurred while writing to CSV: {e}")
 
     return state, state
+
 
 
 # Set hackGPT_mode based on user input
